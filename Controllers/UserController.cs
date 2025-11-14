@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MyWebAPI.DTOs;
 using MyWebAPI.Models;
 using MyWebAPI.Services.User;
 
@@ -17,55 +18,69 @@ public class UserController: ControllerBase
   
   [HttpGet]
   [Route("")]
-  public ActionResult<CommonResult<List<UserModel>>> GetUsers()
+  public async Task<ActionResult<CommonResult<List<User>>>> GetUsers()
   {
-    var users = _userService.GetAll();
-    return CommonResult<List<UserModel>>.Success(users);
+    var users = await _userService.GetAll();
+    return CommonResult<List<User>>.Success(users);
   }
 
   [HttpPost]
   [Route("")]
-  public ActionResult<CommonResult<UserModel>> CreateUser([FromQuery] string email, [FromQuery] string username)
+  public async Task<ActionResult<CommonResult<User>>> CreateUser([FromQuery] string email, [FromQuery] string username, [FromQuery] string? address, [FromQuery] int? gender)
   {
-    var user = _userService.Create(email, username);
-    return CommonResult<UserModel>.Success(user);
+    var userDto = new UserDTO
+    {
+      Email = email,
+      Username = username,
+      Address = address,
+      Gender = gender
+    };
+    var user = await _userService.Create(userDto);
+
+    if (user == null)
+    {
+      return CommonResult<User>.Fail("Could not create user");
+    }
+    
+    return CommonResult<User>.Success(user);
   }
 
   [HttpGet]
   [Route("{userId}")]
-  public ActionResult<CommonResult<UserModel>> GetUser(string userId)
+  public async Task<ActionResult<CommonResult<User>>> GetUser(int userId)
   {
-    try
+    var user = await _userService.GetUserById(userId);
+    if (user == null)
     {
-      if (!_userService.TryGetUserById(userId, out var user) || user == null)
-      {
-         throw new Exception("User not found"); 
-      }
-      return CommonResult<UserModel>.Success(user);
+      return CommonResult<User>.Fail("Could not get user");
     }
-    catch (Exception e)
-    {
-      return CommonResult<UserModel>.Fail(e.Message);
-    }
+    return CommonResult<User>.Success(user); 
   }
 
   [HttpPut]
   [Route("{userId}")]
-  public ActionResult<CommonResult<UserModel>> UpdateUser(string userId, [FromQuery] string email,
+  public async Task<ActionResult<CommonResult<User>>> UpdateUser(int userId, [FromQuery] string email,
     [FromQuery] string username)
   {
-    try
-    {
-      if(!_userService.TryGetUserById(userId, out var user) ||  user == null)
+      var user = await _userService.UpdateUserInfo(userId, email, username);
+      if (user == null)
       {
-        throw new Exception("User not found");
+        return CommonResult<User>.Fail("Could not update user");
       }
-      var result = user.UpdateUserInfo(email, username);
-      return CommonResult<UserModel>.Success(result);
-    }
-    catch (Exception e)
+      
+      return CommonResult<User>.Success(user);
+  }
+
+  [HttpDelete]
+  [Route("{userId}")]
+  public async Task<ActionResult<CommonResult<bool>>> DeleteUser(int userId)
+  {
+    var result = await _userService.DeleteUserById(userId);
+    if (result == false)
     {
-      return CommonResult<UserModel>.Fail(e.Message);
+      return CommonResult<bool>.Fail("Could not delete user");
     }
+    
+    return CommonResult<bool>.Success(result);
   }
 }

@@ -1,18 +1,17 @@
+using MyWebAPI.DTOs;
 using MyWebAPI.Models;
 
 namespace MyWebAPI.Services.User;
 
 public interface IUserService
 {
-  public UserModel Create(string email, string username);
+  public Task<Models.User?> Create(UserDTO userDto);
   
-  public List<UserModel> GetAll();
+  public Task<List<Models.User>> GetAll();
 
-  public UserModel? GetUserById(string userId);
+  public Task<Models.User?> GetUserById(int userId);
   
-  public bool TryGetUserById(string userId, out UserModel? user); 
-  
-  public UserModel? UpdateUserInfo(string userId, string email, string username);
+  public Task<Models.User?> UpdateUserInfo(int userId, string email, string username);
 
-  public bool DeleteUserById(string userId);
+  public Task<bool> DeleteUserById(int userId);
 }

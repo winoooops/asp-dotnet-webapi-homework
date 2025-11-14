@@ -1,3 +1,4 @@
+using MyWebAPI.Configs;
 using MyWebAPI.Middleware;
 using MyWebAPI.Services.User;
 
@@ -10,6 +11,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddTransient<RequestLoggingMiddle>();
+// configure the 
+builder.Services.Configure<DBConfig>(builder.Configuration.GetSection("DBConfig"));
 
 
 var app = builder.Build();

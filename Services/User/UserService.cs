@@ -1,59 +1,51 @@
-using MyWebAPI.Models;
+using Microsoft.Extensions.Options;
+using MyWebAPI.Configs;
+using MyWebAPI.DTOs;
+using MyWebAPI.Repositories;
 
 namespace MyWebAPI.Services.User;
 
 public class UserService : IUserService
 {
-  private readonly List<UserModel> _users = new();
+  private readonly List<Models.User> _users = new();
+
+  private UserRepository _repository;
+
+  public UserService(IOptions<DBConfig> options)
+  {
+    _repository = new UserRepository(options);
+  }
   
-  public UserModel Create(string email, string username)
+  public async Task<Models.User?> Create(UserDTO userDto)
   {
-    var newUser = new UserModel(email, username);
-    _users.Add(newUser);
     
-    return newUser;
+    var user = await _repository.CreateUser(userDto);
+    return user;
   }
 
-  public List<UserModel> GetAll()
+  public async Task<List<Models.User>> GetAll()
   {
-    return _users;
+    var users = await _repository.GetAll() ;
+
+    return users;
   }
 
-  public UserModel? GetUserById(string userId)
+  public async Task<Models.User?> GetUserById(int userId)
   {
-    if (!TryGetUserById(userId, out var user) || user == null)
-    {
-      return null;
-    }
+    var user = await _repository.GetUserById(userId);
 
     return user;
   }
 
-  public bool TryGetUserById(string userId, out UserModel? user)
+  public async Task<Models.User?> UpdateUserInfo(int userId, string email, string username)
   {
-    user = _users.FirstOrDefault(u => u.UserId == userId);
-    return user != null;
-  }
-
-
-  public UserModel? UpdateUserInfo(string userId, string email, string username)
-  {
-    if (!TryGetUserById(userId, out var user) || user == null)
-    {
-      return null;
-    }
-    
-    user.UpdateUserInfo(email, username);
+    var user = await _repository.UpdateUser(userId, email, username);
     return user;
   }
 
-  public bool DeleteUserById(string userId)
+  public async Task<bool> DeleteUserById(int userId)
   {
-    if (!TryGetUserById(userId, out var user) || user == null)
-    {
-      return false;
-    }
-    
-    return _users.Remove(user);
+    var result = await _repository.DeleteUser(userId);
+    return result;
   }
 }
