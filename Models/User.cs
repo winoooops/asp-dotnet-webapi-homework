@@ -1,16 +1,24 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MyWebAPI.Models;
 
-public class User
+public class User : BaseModel
 {
-    public int Id { get; init; }
-    
+    [EmailAddress(ErrorMessage = "Email is invalid")]
     public string Email { get; set; }
     
+    [Required]
     public string Username { get; set; }
     
+    [Required]
     public string Address { get; set; }
     
+    [Required]
     public int Gender { get; set; }
+    
+    public Teacher? Teacher { get; set; }
+    
+    public int? TeacherId { get; set; }
     
     public User() { }
 

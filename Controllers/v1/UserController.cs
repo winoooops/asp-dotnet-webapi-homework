@@ -5,6 +5,7 @@ using MyWebAPI.Services.User;
 
 namespace MyWebAPI.Controllers;
 
+[NonController]
 [Route("api/user")]
 [ApiController]
 public class UserController: ControllerBase
