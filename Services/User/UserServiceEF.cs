@@ -32,6 +32,18 @@ public class UserServiceEF : IUserServiceEF
       .FirstOrDefaultAsync(u => u.Id == id);
   }
 
+  public async Task<Models.User?> GetByEmailAsync(string email)
+  {
+    return await _db.Users.Include(u => u.Teacher)
+      .FirstOrDefaultAsync(u => u.Email == email);
+  }
+
+  public async Task<Models.User?> GetByRefreshTokenAsync(string refreshToken)
+  {
+    return await _db.Users.Include(u => u.Teacher)
+      .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+  }
+
   public async Task<Models.User> CreateAsync(Models.User user)
   {
     await _db.Users.AddAsync(user);

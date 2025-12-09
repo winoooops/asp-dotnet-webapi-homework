@@ -10,6 +10,11 @@ public class User : BaseModel
     [Required]
     public string Username { get; set; }
     
+    public string? PasswordHash { get; set; }
+    
+    // I think in real world application, this should be saved in caching?
+    public string? RefreshToken { get; set; }
+    
     [Required]
     public string Address { get; set; }
     
@@ -22,13 +27,14 @@ public class User : BaseModel
     
     public User() { }
 
-    public User(int id, string email, string username,  string address, int gender)
+    public User(int id, string email, string username,  string address, int gender, string? passwordHash)
     {
         Id = id; 
         Email = email;
         Username = username;
         Address = address;
         Gender = gender;
+        PasswordHash = passwordHash;
     }
 
     public User UpdateUserInfo(string email, string username)
