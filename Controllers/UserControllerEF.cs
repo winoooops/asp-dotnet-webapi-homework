@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyWebAPI.Models;
 using MyWebAPI.Services;
@@ -74,6 +75,7 @@ public class UserControllerEF : ControllerBase
 
   [HttpDelete]
   [Route("{userId}")]
+  [Authorize(Roles = "Admin")]
   public async Task<ActionResult<CommonResult<bool>>> DeleteUser([FromRoute] string userId)
   {
     if (int.TryParse(userId, out var id))

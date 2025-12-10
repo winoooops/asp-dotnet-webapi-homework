@@ -1,3 +1,5 @@
+using MyWebAPI.Models;
+
 namespace MyWebAPI.DTOs;
 
 public class SignUpRequest
@@ -7,4 +9,6 @@ public class SignUpRequest
   public string Password { get; set; }
   public int Gender { get; set; }
   public string Address { get; set; }
+  
+  public string Role { get; set; }
 }

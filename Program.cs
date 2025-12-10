@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,7 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"))
 builder.Services.AddDbContext<ModelDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IUserServiceEF, UserServiceEF>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<IIamUserService, IamUserService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddTransient<RequestLoggingMiddle>();
@@ -38,12 +40,15 @@ builder.Services
     {
       ValidateIssuer = true,
       ValidIssuer = jwtSection["Issuer"],
+      ValidateAudience = false,
       ValidateIssuerSigningKey = true,
       IssuerSigningKey = new SymmetricSecurityKey(key),
       ValidateLifetime = true,
-      ClockSkew = TimeSpan.FromMinutes(1)
+      ClockSkew = TimeSpan.FromMinutes(1),
+      RoleClaimType = ClaimTypes.Role
     };
   });
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(options =>
@@ -100,9 +105,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseRequestLogging();
-app.UseAuthentication();
-app.UseAuthentication();
+app.MapControllers();
 
 app.Run();

@@ -1,8 +1,10 @@
+using MyWebAPI.Models;
+
 namespace MyWebAPI.Services.Auth;
 
 public interface IJwtTokenService
 {
-  public string GenerateAccessToken(Models.User user);
+  public string GenerateAccessToken(IamUser principal);
 
   public string GenerateRefreshToken();
 }

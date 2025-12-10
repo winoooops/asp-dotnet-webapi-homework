@@ -6,6 +6,8 @@ public class JwtSettings
   
   public string Key { get; set; }
   
+  public string Audience { get; set; }
+  
   public double  AccessTokenMinutes { get; set; }
   
   public int RefreshTokenDays { get; set; }

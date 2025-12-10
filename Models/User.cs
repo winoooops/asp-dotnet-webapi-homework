@@ -2,18 +2,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyWebAPI.Models;
 
-public class User : BaseModel
+public class User : BaseModel, IamUser
 {
-    [EmailAddress(ErrorMessage = "Email is invalid")]
-    public string Email { get; set; }
-    
     [Required]
     public string Username { get; set; }
     
-    public string? PasswordHash { get; set; }
-    
-    // I think in real world application, this should be saved in caching?
+    public string Role { get; set; } = "User";
     public string? RefreshToken { get; set; }
+    
+    [EmailAddress(ErrorMessage = "Email is invalid")]
+    public string Email { get; set; }
+    
+    public string? PasswordHash { get; set; }
     
     [Required]
     public string Address { get; set; }

@@ -43,6 +43,11 @@ public class ModelDBContext : DbContext
       entity.ToTable("teacher_table");
       entity.HasKey(x => x.Id);
       entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
+      entity.Property(x => x.Name).HasColumnName("name").IsRequired().HasMaxLength(100);
+      entity.Property(x => x.Email).HasColumnName("email").IsRequired().HasMaxLength(150);
+      entity.Property(x => x.PasswordHash).HasColumnName("password_hash");
+      entity.Property(x => x.RefreshToken).HasColumnName("refresh_token");
+      entity.Property(x => x.Role).HasColumnName("Role").HasMaxLength(50);
 
       entity.HasMany(t => t.Users)
         .WithOne(u => u.Teacher)
@@ -60,6 +65,9 @@ public class ModelDBContext : DbContext
       entity.Property(x => x.Address).HasColumnName("address").HasMaxLength(100);
       entity.Property(x => x.Gender).HasColumnName("gender");
       entity.Property(x => x.TeacherId).HasColumnName("teacher_id");
+      entity.Property(x => x.Role).HasColumnName("Role").HasMaxLength(50);
+      entity.Property(x => x.PasswordHash).HasColumnName("PasswordHash");
+      entity.Property(x => x.RefreshToken).HasColumnName("RefreshToken");
     });
     
     base.OnModelCreating(modelBuilder);
